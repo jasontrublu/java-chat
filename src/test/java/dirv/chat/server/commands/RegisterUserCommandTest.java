@@ -49,6 +49,7 @@ public class RegisterUserCommandTest extends CommandTest {
         String output = executeCommand("Donald\n");
         assertEquals(1, users.size());
         assertEquals("ERROR\n", output);
+        assertEquals(1, messageRepository.getMessages().size());
     }
 
     @Test

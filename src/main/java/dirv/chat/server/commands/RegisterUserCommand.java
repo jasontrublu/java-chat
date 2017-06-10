@@ -23,7 +23,9 @@ public class RegisterUserCommand extends RecognizedCommand {
         String user = reader.readLine();
 
         boolean added = attemptAdd(user);
-        messageRepository.receiveMessage(user, String.format("User %s has registered", user));
+        if (added) {
+            messageRepository.receiveMessage(user, String.format("User %s has registered", user));
+        }
         printWriter.println(added ? "OK" : "ERROR");
     }
 
