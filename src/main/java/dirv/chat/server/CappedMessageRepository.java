@@ -9,7 +9,7 @@ import dirv.chat.Message;
 
 public class CappedMessageRepository implements MessageRepository {
 
-    private TreeSet<Message> messages = new TreeSet<Message>(new ChronologicalComparator());
+    private TreeSet<Message> messages = new TreeSet<>(new ChronologicalComparator());
     private final Clock clock;
     private final int cap;
 

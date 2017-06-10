@@ -45,8 +45,8 @@ public class Server implements Runnable {
                 handleSocket(socket);
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new RuntimeException();
+//            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
     }
     
@@ -76,6 +76,6 @@ public class Server implements Runnable {
                 return c;
             }
         }
-        return null;
+        return new UnknownCommand();
     }
 }

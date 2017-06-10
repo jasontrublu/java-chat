@@ -29,4 +29,24 @@ public class Message {
             user + System.lineSeparator() +
             message + System.lineSeparator();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Message message1 = (Message) o;
+
+        if (timestamp != message1.timestamp) return false;
+        if (user != null ? !user.equals(message1.user) : message1.user != null) return false;
+        return message != null ? message.equals(message1.message) : message1.message == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (timestamp ^ (timestamp >>> 32));
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        return result;
+    }
 }

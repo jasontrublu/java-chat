@@ -19,27 +19,19 @@ public class Chat {
             "Usage for server: java -jar chat.jar server <port>   (default is 3000)\n"+
             "Usage for client: java -jar chat.jar <address> <port> <your name>\n"+
             " e.g. java -jar chat 127.0.0.1 3000 Donald\n";
-    private static final ServerFactory realServerFactory = new ServerFactory() {
-        @Override
-        public Runnable build(int port) {
-            return new Server(new NetServerSocketFactory(),
-                    new ArrayList<String>(),
-                    new CappedMessageRepository(new Clock(), 200),
-                    port);
-        }
-    };
+    private static final ServerFactory realServerFactory = port -> new Server(new NetServerSocketFactory(),
+            new ArrayList<>(),
+            new CappedMessageRepository(new Clock(), 200),
+            port);
 
-    private static final ClientFactory realClientFactory = new ClientFactory() {
-        @Override
-        public Runnable build(String address, int port, String user) {
-            MessageSender messageSender = new MessageSender(new NetSocketFactory(), address, port, user);
-            Display display = new Display(System.out);
-            return new Client(Executors.newScheduledThreadPool(1),
-                    new ServerListener(messageSender, display),
-                    messageSender,
-                    display,
-                    System.in);
-        }
+    private static final ClientFactory realClientFactory = (address, port, user) -> {
+        MessageSender messageSender = new MessageSender(new NetSocketFactory(), address, port, user);
+        Display display = new Display(System.out);
+        return new Client(Executors.newScheduledThreadPool(1),
+                new ServerListener(messageSender, display),
+                messageSender,
+                display,
+                System.in);
     };
 
     public static void main(String[] args) {

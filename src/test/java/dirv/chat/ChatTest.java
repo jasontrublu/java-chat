@@ -19,19 +19,12 @@ public class ChatTest {
     private String clientUsername;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
     
-    private Runnable runnableSpy = new Runnable() {
-        public void run() {
-            wasRun = true;
-        }
-    };
+    private Runnable runnableSpy = () -> wasRun = true;
 
-    private ServerFactory serverFactory = new ServerFactory() {
-        @Override
-        public Runnable build(int port) {
-            serverWasBuilt = true;
-            serverPort = port;
-            return runnableSpy;
-        }
+    private ServerFactory serverFactory = port -> {
+        serverWasBuilt = true;
+        serverPort = port;
+        return runnableSpy;
     };
     
     private ClientFactory clientFactory = new ClientFactory() {

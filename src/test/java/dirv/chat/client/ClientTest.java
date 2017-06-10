@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import dirv.chat.Message;
 import org.junit.Test;
 
 public class ClientTest {
@@ -29,6 +30,7 @@ public class ClientTest {
     public void registersUsersBeforeSending() {
         client("").run();
         assertTrue(messageSender.getWasRegistered());
+        assertEquals(new Message(0, "system", "client started") ,display.getMessagesShown().get(0));
     }
     
     @Test

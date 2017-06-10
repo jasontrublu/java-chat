@@ -1,5 +1,7 @@
 package dirv.chat.client;
 
+import dirv.chat.Message;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +16,9 @@ public class Client implements Runnable {
     private final MessageSender messageSender;
     private final Display display;
     private final InputStream input;
-    
+
     public Client(ScheduledExecutorService executor, ServerListener serverListener,
-            MessageSender messageSender, Display display, InputStream input) {
+                  MessageSender messageSender, Display display, InputStream input) {
         this.executor = executor;
         this.serverListener = serverListener;
         this.messageSender = messageSender;
@@ -31,8 +33,9 @@ public class Client implements Runnable {
                 display.error("user registration failed");
                 return;
             }
+            display.message(new Message(0, "system","client started"));
             sendMessagesFromInput();
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             display.exception(ex);
         }
     }
@@ -40,13 +43,13 @@ public class Client implements Runnable {
     private void scheduleMessageReading() {
         executor.scheduleWithFixedDelay(serverListener, 0, 3, TimeUnit.SECONDS);
     }
-    
+
     private boolean registerUser() throws IOException {
         return messageSender.register();
     }
-    
+
     private void sendMessagesFromInput() throws IOException {
-        try(BufferedReader reader = new BufferedReader(
+        try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(input))) {
             String message;
             while ((message = reader.readLine()) != null) {
@@ -56,6 +59,5 @@ public class Client implements Runnable {
             }
         }
     }
-    
 
 }

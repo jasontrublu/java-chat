@@ -17,14 +17,15 @@ import java.util.List;
 
 public class ServerTest {
 
+    private static final int PORT = 5678;
     private ServerSocketFactoryStub serverSocketFactory = new ServerSocketFactoryStub();
-    private List<String> users = new ArrayList<String>();
+    private List<String> users = new ArrayList<>();
     private MessageRepositorySpy messageRepository = new MessageRepositorySpy();
 
     @Test
     public void listensOnSpecifiedPort() throws IOException {
-        startListening(5678);
-        assertEquals(5678, serverSocketFactory.getPort());
+        startListening(PORT);
+        assertEquals(PORT, serverSocketFactory.getPort());
     }
     
     @Test
@@ -53,7 +54,7 @@ public class ServerTest {
     }
     
     @Test
-    public void doNotSendAMessageOnUserRegistration() throws IOException {
+    public void doSendAMessageOnUserRegistration() throws IOException {
         receiveClientMessage("1", "Donald");
         startListening();
         assertEquals(0, messageRepository.getMessages().size());
