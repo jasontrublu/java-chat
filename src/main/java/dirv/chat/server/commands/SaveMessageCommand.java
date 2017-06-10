@@ -1,11 +1,11 @@
 package dirv.chat.server.commands;
 
+import dirv.chat.server.MessageRepository;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-
-import dirv.chat.server.MessageRepository;
 
 public class SaveMessageCommand extends RecognizedCommand {
 
@@ -26,7 +26,7 @@ public class SaveMessageCommand extends RecognizedCommand {
             return;
         }
         String message = reader.readLine();
-        messageRepository.receiveMessage(user,  message);
+        messageRepository.receiveMessage(user, message);
         printWriter.println("OK");
     }
 }

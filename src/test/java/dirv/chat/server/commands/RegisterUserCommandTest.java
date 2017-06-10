@@ -1,5 +1,7 @@
 package dirv.chat.server.commands;
 
+import dirv.chat.Message;
+import dirv.chat.server.MessageRepositorySpy;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,6 +15,7 @@ import static org.junit.Assert.assertThat;
 public class RegisterUserCommandTest extends CommandTest {
 
     private final List<String> users = new ArrayList<>();
+    private MessageRepositorySpy messageRepository = new MessageRepositorySpy();
 
     @Test
     public void addsNewName() throws IOException {
@@ -54,7 +57,16 @@ public class RegisterUserCommandTest extends CommandTest {
         assertThat(users, hasItem("Donald"));
     }
 
+    @Test
+    public void sendMessageIfNewUserRegisters() throws Exception {
+        executeCommand("Donald\n");
+
+        Message message = messageRepository.getMessages().get(0);
+        assertEquals("Donald", message.getUser());
+        assertEquals("User Donald has registered", message.getMessage());
+    }
+
     protected Command command() {
-        return new RegisterUserCommand(users);
+        return new RegisterUserCommand(users, messageRepository);
     }
 }

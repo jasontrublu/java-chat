@@ -31,7 +31,7 @@ public class Server implements Runnable {
     
     private static List<Command> buildCommands(List<String> users, MessageRepository messageRepository) {
         return Arrays.asList(
-                new RegisterUserCommand(users),
+                new RegisterUserCommand(users, messageRepository),
                 new SaveMessageCommand(messageRepository, users),
                 new RelayMessagesCommand(messageRepository),
                 new UnknownCommand());
@@ -45,7 +45,6 @@ public class Server implements Runnable {
                 handleSocket(socket);
             }
         } catch (IOException ex) {
-//            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }

@@ -1,19 +1,18 @@
 package dirv.chat.server;
 
-import org.junit.Test;
-
 import dirv.chat.Message;
 import dirv.chat.SocketStub;
-import dirv.chat.server.Server;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static dirv.chat.Assertions.*;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static dirv.chat.Assertions.assertEqualsLines;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class ServerTest {
 
@@ -27,7 +26,7 @@ public class ServerTest {
         startListening(PORT);
         assertEquals(PORT, serverSocketFactory.getPort());
     }
-    
+
     @Test
     public void acceptsASocket() throws IOException {
         SocketStub client = receiveClientMessage("");
@@ -35,14 +34,25 @@ public class ServerTest {
         assertEquals(1, serverSocketFactory.acceptedSockets.size());
         assertEquals(client, serverSocketFactory.acceptedSockets.get(0));
     }
-    
+
     @Test
     public void connectsANewClient() throws IOException {
         receiveClientMessage("1", "Donald");
         startListening();
         assertThat(users, hasItem("Donald"));
     }
-    
+
+    @Test
+    public void sendMessageForRegisteredClient() throws Exception {
+        receiveClientMessage("1", "Donald");
+
+        startListening();
+
+        assertEquals(1, messageRepository.getMessages().size());
+        assertEquals("Donald", message(0).getUser());
+        assertEquals("User Donald has registered", message(0).getMessage());
+    }
+
     @Test
     public void receiveMessages() throws IOException {
         users.add("Donald");
@@ -52,27 +62,20 @@ public class ServerTest {
         assertEquals("Donald", message(0).getUser());
         assertEquals("Hello, world!", message(0).getMessage());
     }
-    
-    @Test
-    public void doSendAMessageOnUserRegistration() throws IOException {
-        receiveClientMessage("1", "Donald");
-        startListening();
-        assertEquals(0, messageRepository.getMessages().size());
-    }
-    
+
     @Test
     public void doNotAddAUserOnMessageSend() {
         receiveClientMessage("2", "Donald", "Hello, world!");
         startListening();
         assertEquals(0, users.size());
     }
-    
+
     @Test
     public void ignoresUnrecognizedCommands() {
         receiveClientMessage("x");
         startListening();
     }
-    
+
     @Test
     public void sendMessageAcknowledgement() {
         SocketStub client = receiveClientMessage("1", "Donald");
@@ -91,18 +94,18 @@ public class ServerTest {
                 "200", "Donald", "Hello?");
         assertEqualsLines(expected, client.getOutput());
     }
-    
+
     @Test
     public void handlesMultipleClients() {
         receiveClientMessage("1", "Donald");
         receiveClientMessage("2", "Donald", "Hello, world!");
         SocketStub lastClient = receiveClientMessage("3", "0");
         startListening();
-        List<String> expected = Arrays.asList(
+        List<String> expected = Arrays.asList("-1", "Donald", "User Donald has registered",
                 "-1", "Donald", "Hello, world!");
         assertEqualsLines(expected, lastClient.getOutput());
     }
-    
+
     private void addMessage(long timestamp, String name, String message) {
         messageRepository.add(timestamp, name, message);
     }
